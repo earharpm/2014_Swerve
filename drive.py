@@ -13,6 +13,7 @@ class Drive(common.ComponentBase):
 
         self.drive_joy = config.drive_joy
         self.hs_button = config.hs_button
+        self.hs_steer_button = config.hs_steer_button
 
         self.reversed = False
 
@@ -25,18 +26,34 @@ class Drive(common.ComponentBase):
 
         pos = self.encoder.Get()
 
-        if reversed:
-            speed = -speed
-
-        if angle > 180:
+        # Limits the travel to -90 - 90 and reverses the motor 
+        if angle > 90:
             angle -= 180
             self.reversed = not self.reversed
+        elif angle < -90:
+            angle += 180
+            self.reversed = not self.reversed
+        if self.reversed:
+            speed = -speed
 
+        # Limit the turning to -90 - 90 just in case
+        turn_speed = angle - pos / 180 + .1
+
+        if self.encoder.Get() < - 90 and turn_speed < 0:
+            turn_speed = 0
+        elif self.encoder.Get() > 90 and turn_speed > 0:
+            turn_speed = 0
+
+        # This will still let it turn at full speed
         if self.hs_button.get():
             speed /= 2
 
-        for i in self.drive_motors:
-            i.Set(speed)
+        # This will cut everything in half
+        if self.hs_steer_button.get():
+            speed /= 2
+            turn_speed /= 2
 
-        for i in self.steering_motors:
-            i.Set(angle - pos / 180 + .1)
+        # Acutally set the motors
+        for i in len(self.drive_motors):
+            self.drive_motors[i].Set(speed)
+            self.steering_motors[i].Set(turn_speed)

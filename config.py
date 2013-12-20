@@ -11,10 +11,11 @@ class Drive(object):
 
     drive_motors = [ wpilib.Jaguar(x*2) for x in range(5) ]
     steering_motors = [ wpilib.Jaguar(x*2 + 1) for x in range(5) ]
-    encoder = wpilib.encoder(1, 2)
+    encoder = wpilib.Encoder(1, 2)
 
     # Buttons
     hs_button = Button(leftJoy, 1)
+    hs_steer_button = Button(leftJoy, 2)
 
 # Core Functions
 def CheckRestart():

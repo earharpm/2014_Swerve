@@ -22,7 +22,7 @@ class TestDrive(unittest.TestCase):
         self.steering_motors = [ mock.Motor() for x in range(5)]
         self.encoder = mock.Encoder()
         self.hs_button = mock.Button()
-
+        self.hs_steer_button = mock.Button()
 
         class MockDriveConfig(object):
             # Motors & Drive System
@@ -33,6 +33,7 @@ class TestDrive(unittest.TestCase):
             encoder = self.encoder
 
             hs_button = self.hs_button
+            hs_steer_button = self.hs_steer_button
 
         self.drive = drive.Drive(MockDriveConfig)
 
