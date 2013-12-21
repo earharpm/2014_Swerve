@@ -54,6 +54,7 @@ class Drive(common.ComponentBase):
             turn_speed /= 2
 
         # Acutally set the motors
-        for i in len(self.drive_motors):
-            self.drive_motors[i].Set(speed)
-            self.steering_motors[i].Set(turn_speed)
+        for i in self.drive_motors:
+            i.Set(speed)
+        for i in self.steering_motors:
+            i.Set(speed)

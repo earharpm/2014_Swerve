@@ -44,8 +44,8 @@ class TestDrive(unittest.TestCase):
         self.joystick.x = 0.0
 
         # Sweep forward
-        for magnitude in seq(-1.0, 1.0, 0.1):
-            self.joystick.magnitude = magnitude
+        for mag in seq(-1.0, 1.0, 0.1):
+            self.joystick.magnitude = mag
 
             self.drive.op_tick()
 
@@ -53,8 +53,8 @@ class TestDrive(unittest.TestCase):
                 self.assertEquals(i.speed, self.joystick.magnitude)
 
         # Sweep back
-        for magnitude in seq(1.0, -1.0, -0.1):
-            self.joystick.magnitude = magnitude
+        for mag in seq(1.0, -1.0, -0.1):
+            self.joystick.magnitude = mag
 
             self.drive.op_tick()
 
@@ -62,6 +62,7 @@ class TestDrive(unittest.TestCase):
                 self.assertEquals(i.speed, self.joystick.magnitude)
 
 ### NEEDS WORK ###
+    # This one is broken and I really don't want to think about it....
     def test_steering(self):
         self.joystick.y = 0.0
 
@@ -83,25 +84,85 @@ class TestDrive(unittest.TestCase):
             self.assertEquals(self.robot_drive.speed, self.joystick.y)
             self.assertEquals(self.robot_drive.rotation, self.joystick.x)
 
-    def test_half_speed_throttle(self):
-        self.hs_button.pressed = True
+# These should work though
+    def test_steering_limits(self):
+        # CCW Limits
+        self.encoder.count = -100
 
-        self.joystick.x = 0.0
+        for x in range(-180, 180):
+            self.joystick.dir = x
+
+            drive.op_tick()
+
+            for i in self.drive.steering_motors:
+                if i.speed < 0
+                    self.fail()
+
+        # CW Limits
+        self.encoder.count = 100
+
+        for x in range(-180, 180):
+            self.joystick.dir = x
+
+            drive.op_tick()
+
+            for i in self.drive.steering_motors:
+                if i.speed > 0
+                    self.fail()
+
+
+    def test_half_speed_drive_throttle(self):
+        self.hs_button.pressed = True
+        self.hs_steer_button.pressed = False
 
         # Sweep forward
-        for y in seq(-1.0, 1.0, 0.1):
-            self.joystick.y = y
+        for mag in seq(-1.0, 1.0, 0.1):
+            self.joystick.magnitude = mag
 
             self.drive.op_tick()
 
-            self.assertEquals(self.robot_drive.speed, self.joystick.y/2)
-            self.assertEquals(self.robot_drive.rotation, self.joystick.x)
+            for i in self.drive.drive_motors:
+                self.assertEquals(i.speed = self.joystick.magnitude/2)
 
         # Sweep back
-        for y in seq(1.0, -1.0, -0.1):
-            self.joystick.y = y
+        for mag in seq(1.0, -1.0, -0.1):
+            self.joystick.magnitude = mag
 
             self.drive.op_tick()
 
-            self.assertEquals(self.robot_drive.speed, self.joystick.y/2)
-            self.assertEquals(self.robot_drive.rotation, self.joystick.x)
+            for i in self.drive.drive_motors:
+                self.assertEquals(i.speed = self.joystick.magnitude/2)
+
+    def test_half_speed_turn_throttle():
+        self.hs_button.pressed = False
+        self.hs_steer_button.pressed = True
+
+        # Sweep forward
+        for mag in seq(-1.0, 1.0, 0.1):
+            self.joystick.magnitude = mag
+
+            self.drive.op_tick()
+
+            for i in self.drive.drive_motors:
+                self.assertEquals(i.speed = self.joystick.magnitude/2)
+
+            for i in self.drive.steering_motors:
+                if i.speed > .5:
+                    self.fail()
+                elif i.speed < -.5:
+                    self.fail()
+
+        # Sweep back
+        for mag in seq(1.0, -1.0, -0.1):
+            self.joystick.magnitude = mag
+
+            self.drive.op_tick()
+
+            for i in self.drive.drive_motors:
+                self.assertEquals(i.speed = self.joystick.magnitude/2)
+
+            for i in self.steering_motors:
+                if i.speed > .5:
+                    self.fail()
+                elif i.speed < -.5:
+                    self.fail()
