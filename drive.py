@@ -29,16 +29,19 @@ class Drive(common.ComponentBase):
         # Limits the travel to -90 - 90 and reverses the motor 
         if angle > 90:
             angle -= 180
-            self.reversed = not self.reversed
+            self.reversed = True
         elif angle < -90:
             angle += 180
-            self.reversed = not self.reversed
+            self.reversed = True
+        else:
+            self.reversed = False
+
         if self.reversed:
             speed = -speed
 
-        # Limit the turning to -90 - 90 just in case
-        turn_speed = angle - pos / 180 + .1
+        turn_speed = (angle - pos) / 180 + .01
 
+        # Limit the turning to -90 - 90 just in case
         if self.encoder.Get() < - 90 and turn_speed < 0:
             turn_speed = 0
         elif self.encoder.Get() > 90 and turn_speed > 0:

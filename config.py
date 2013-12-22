@@ -7,6 +7,8 @@ rightJoy = wpilib.Joystick(2)
 
 
 class Drive(object):
+	has_gyro = False
+
     drive_joy = leftJoy
 
     drive_motors = [ wpilib.Jaguar(x*2) for x in range(5) ]
